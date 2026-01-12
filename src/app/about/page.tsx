@@ -1,7 +1,9 @@
-const About = () => {
+import About from "@/components/About/About";
+
+const AboutPage = () => {
     return (
-        <>This is the About page</>
+        <><About /></>
     )
 }
 
-export default About;   
+export default AboutPage;   

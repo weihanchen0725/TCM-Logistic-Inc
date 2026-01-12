@@ -1,7 +1,7 @@
-const News = () => {
+const NewsPage = () => {
     return (
         <>This is the News page</>
     )
 }
 
-export default News;
+export default NewsPage;

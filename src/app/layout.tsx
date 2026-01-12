@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -85,9 +86,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} antialiased`}>
-        <Header />
-        {children}
+      <body className={`${roboto.variable} font-sans antialiased bg-white text-gray-900 min-h-screen flex flex-col`}>
+          <Header />
+          <main className="flex-grow">
+            {children}
+          </main>
+          <Footer />
       </body>
     </html>
   );
