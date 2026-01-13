@@ -1,7 +1,11 @@
+import Tools from "@/components/Tools/Tools";
+
 const ToolsPage = () => {
-    return (
-        <>This is the Tools page</>
-    )
-}
+  return (
+    <>
+      <Tools />
+    </>
+  );
+};
 
 export default ToolsPage;

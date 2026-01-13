@@ -86,12 +86,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable} font-sans antialiased bg-white text-gray-900 min-h-screen flex flex-col`}>
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
+      <body
+        className={`${roboto.variable} font-sans antialiased bg-white text-gray-900 min-h-screen flex flex-col`}
+      >
+        <Header />
+        <main className="flex-grow">{children}</main>
+        <Footer />
       </body>
     </html>
   );

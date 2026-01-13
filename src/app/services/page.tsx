@@ -1,7 +1,11 @@
+import Services from "@/components/Services/Services";
+
 const ServicesPage = () => {
-    return (
-        <>This is the Services page</>
-    )
-}
+  return (
+    <>
+      <Services />
+    </>
+  );
+};
 
 export default ServicesPage;
