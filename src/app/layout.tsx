@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
+import Providers from "@/components/Providers/Providers";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -85,13 +86,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head />
       <body
-        className={`${roboto.variable} font-sans antialiased bg-white text-gray-900 min-h-screen flex flex-col`}
+        className={`${roboto.variable} font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-200`}
       >
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <Providers>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
