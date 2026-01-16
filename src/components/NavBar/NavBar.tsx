@@ -7,14 +7,18 @@ import ThemeSwitcher from "../ThemeSwitcher/ThemeSwitcher";
 // import Image from "next/image";
 // import CompanyLogo from '../../assets/images/tcm_logistic_logo.svg'
 import NavBarData from './NavBarData.json'
+import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const NavBar = () => {
+  // Translations
+  const translateNavBar = useTranslations("NavBar");
+
   // State for mobile menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Ref for the nav element to detect outside clicks
   const navRef = useRef<HTMLElement>(null);
-
 
   // Toggle mobile menu
   const toggleMenu = () => {
@@ -28,14 +32,14 @@ const NavBar = () => {
 
   // Classes for navigation links
   const defaultDesktopLinkClasses = useMemo(() => {
-    return "px-4 py-2 rounded-md text-gray-700 dark:text-gray-300 font-medium hover:bg-red-50 dark:hover:bg-gray-800 hover:text-red-600 dark:hover:text-white transition-all duration-200";
+    return "px-4 py-2 rounded-md text-brand-navy dark:text-gray-100 font-medium hover:bg-brand-yellow-light dark:hover:bg-brand-yellow/20 hover:text-brand-navy dark:hover:text-brand-yellow transition-all duration-200 whitespace-nowrap";
   }, []);
   const redDesktopLinkClasses = useMemo(() => {
-    return "ml-2 px-5 py-2 rounded-md bg-red-600 dark:bg-red-600 text-white font-medium hover:bg-red-700 dark:hover:bg-red-500 shadow-sm dark:shadow-red-900/20 transition-all duration-200";
+    return "ml-2 px-5 py-2 rounded-md bg-brand-yellow text-brand-navy font-semibold hover:bg-brand-yellow-hover shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap";
   }, []);
   // Classes for disabled navigation link
   const disabledDesktopLinkClasses = useMemo(() => {
-    return "px-4 py-2 rounded-md text-gray-400 dark:text-gray-600 font-medium cursor-not-allowed transition-all duration-200";
+    return "px-4 py-2 rounded-md text-brand-gray dark:text-gray-600 font-medium cursor-not-allowed transition-all duration-200 whitespace-nowrap";
   }, []);
 
   // Function to get classes for desktop navigation links based on color
@@ -52,14 +56,14 @@ const NavBar = () => {
 
   // Function to get classes for mobile navigation links based on color
   const defaultMobileLinkClasses = useMemo(() => {
-    return "block px-4 py-3 rounded-md text-gray-700 dark:text-gray-300 font-medium hover:bg-red-50 dark:hover:bg-gray-800 hover:text-red-600 dark:hover:text-white transition-all duration-200";
+    return "block px-4 py-3 rounded-md text-brand-navy dark:text-gray-100 font-medium hover:bg-brand-yellow-light dark:hover:bg-brand-yellow/20 hover:text-brand-navy dark:hover:text-brand-yellow transition-all duration-200";
   }, []);
   // Mobile navigation link classes
   const redMobileLinkClasses = useMemo(() => {
-    return "block px-4 py-3 rounded-md bg-red-600 dark:bg-red-600 text-white font-medium text-center hover:bg-red-700 dark:hover:bg-red-500 shadow-sm dark:shadow-red-900/20 transition-all duration-200 mt-2";
+    return "block px-4 py-3 rounded-md bg-brand-yellow text-brand-navy font-semibold text-center hover:bg-brand-yellow-hover shadow-md hover:shadow-lg transition-all duration-200 mt-2";
   }, []);
   const disabledMobileLinkClasses = useMemo(() => {
-    return "block px-4 py-3 rounded-md text-gray-400 dark:text-gray-600 font-medium cursor-not-allowed transition-all duration-200";
+    return "block px-4 py-3 rounded-md text-brand-gray dark:text-gray-600 font-medium cursor-not-allowed transition-all duration-200";
   }, []);
 
   // Function to get classes for mobile navigation links based on color
@@ -105,37 +109,49 @@ const NavBar = () => {
   
 
   return (
-    <nav ref={navRef} className="bg-white dark:bg-gray-950 shadow-md dark:shadow-none dark:border-b dark:border-gray-800 relative transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <nav ref={navRef} className="bg-white dark:bg-[#0a0a1a] shadow-sm dark:shadow-none border-b border-gray-100 dark:border-brand-navy-light relative transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 2xl:max-w-screen-2xl">
+        <div className="flex flex-row items-center justify-between h-16 gap-4">
           {/* Logo */}
           <div className="flex-shrink-0">
             {/* <Image src={CompanyLogo} alt="Company Logo" className="h-10 w-auto" /> */}
             <Link
               href="/"
-              className="text-2xl font-bold text-red-600 dark:text-white hover:text-red-700 dark:hover:text-red-400 transition-colors"
+              className="flex items-center hover:opacity-80 transition-opacity"
             >
-              TCM Logistics
+              <Image 
+              src="/DITLogo.svg" 
+              alt="DIT San Francisco Inc. Logo" 
+              width={45} 
+              height={45}
+              priority
+              style={{ width: 'auto', height: 'auto' }}
+              />
+              {translateNavBar("title")}
             </Link>
           </div>
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:block">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               {NavBarData.data.map((item, index) =>
                 item.isActive && (
+                  <React.Fragment key={item.name + index}>
+                  {index === NavBarData.data.length - 1 && (
+                    <ThemeSwitcher />
+                  )}
                   <Link
-                    key={item.name + index}
                     href={item.isDisabled ? "#" : item.href}
                     className={item.isDisabled ? getDesktopLinkClasses({ color: "disabled" }) : getDesktopLinkClasses(item)}
                     aria-disabled={item.isDisabled}
                     onClick={item.isDisabled ? (e) => e.preventDefault() : undefined}
                   >
-                    {item.name}
+                    {translateNavBar(item.name)}
                   </Link>
+                  </React.Fragment>
+                  
                 )
               )}
-              <ThemeSwitcher />
             </div>
           </div>
 
@@ -143,7 +159,7 @@ const NavBar = () => {
           <div className="flex items-center md:hidden space-x-2">
             <button
               onClick={toggleMenu}
-              className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500 dark:focus:ring-red-400 transition-colors duration-200"
+              className="p-2 rounded-md text-brand-navy dark:text-gray-100 hover:bg-brand-yellow-light dark:hover:bg-brand-yellow/20 focus:outline-none focus:ring-2 focus:ring-brand-yellow transition-colors duration-200"
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
             >
@@ -159,7 +175,7 @@ const NavBar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-gray-950 shadow-lg dark:shadow-none dark:border-b dark:border-gray-800 transform transition-all duration-300 ease-in-out ${
+        className={`md:hidden absolute top-16 left-0 right-0 bg-white dark:bg-[#0a0a1a] shadow-lg dark:shadow-none border-b border-gray-100 dark:border-brand-navy-light transform transition-all duration-300 ease-in-out ${
           isMenuOpen
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-2 pointer-events-none"
@@ -169,17 +185,18 @@ const NavBar = () => {
           {NavBarData.data.map((item, index) => (
             <React.Fragment key={item.name + index}>
               {index === NavBarData.data.length - 1 && (
-                <div className="flex items-center justify-between px-4 py-3 rounded-md text-gray-700 dark:text-gray-300 font-medium">
-                  <span>Appearance</span>
+                <div key={`theme-switcher-${NavBarData.data.length}`} className="flex items-center justify-between px-4 py-3 rounded-md text-brand-navy dark:text-gray-100 font-medium">
+                  <span>{translateNavBar("Appearance")}</span>
                   <ThemeSwitcher />
                 </div>
               )}
               <Link
+                key={item.name + index}
                 href={item.isDisabled ? "#" : item.href}
                 onClick={item.isDisabled ? (e) => e.preventDefault() : closeMenu}
                 className={item.isDisabled ? getMobileLinkClasses({ color: "disabled" }) : getMobileLinkClasses(item)}
               >
-                {item.name}
+                {translateNavBar(item.name)}
               </Link>
             </React.Fragment>
           ))}

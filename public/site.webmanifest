@@ -1,0 +1,17 @@
+{
+  "name": "DIT San Francisco Inc.",
+  "short_name": "DIT SF",
+  "description": "DIT San Francisco Inc. - Leading logistics management company providing efficient shipping, tracking, warehousing, and supply chain solutions.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffcc00",
+  "icons": [
+    {
+      "src": "/DITLogo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

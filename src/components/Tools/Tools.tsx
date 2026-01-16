@@ -1,39 +1,28 @@
-const Tools = () => {
+import Features from "../Features/Features";
+import TrackingSystemIcon from "@/assets/icons/TrackingSystemIcon";
+import InventoryManagementIcon from "@/assets/icons/InventoryManagementIcon";
+import RouteOptimizationIcon from "@/assets/icons/RouteOptimizationIcon";
+import CostCalculatorIcon from "@/assets/icons/CostCalculatorIcon";
+import SchedulePickupIcon from "@/assets/icons/SchedulePickupIcon";
+import { getTranslations } from "next-intl/server";
+
+const Tools = async () => {
+  const translateTools = await getTranslations('Tools');
+
   return (
-    <div className="min-h-screen bg-white">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-        <h2 className="text-3xl font-extrabold text-gray-900">Our Tools</h2>
-        <p className="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl">
-          Explore the innovative tools we use to enhance our logistics services.
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-4xl font-bold text-brand-navy dark:text-white tracking-tight">{translateTools("title")}</h2>
+        <p className="mt-6 text-lg sm:text-xl text-brand-gray dark:text-gray-300 max-w-2xl leading-relaxed">
+          {translateTools("description")}
         </p>
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="text-center p-6 rounded-lg bg-gray-50 hover:shadow-md transition-shadow duration-200">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Tracking System
-            </h3>
-            <p className="mt-2 text-gray-600">
-              Advanced tracking system to monitor your shipments in real-time.
-            </p>
-          </div>
-          <div className="text-center p-6 rounded-lg bg-gray-50 hover:shadow-md transition-shadow duration-200">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Inventory Management
-            </h3>
-            <p className="mt-2 text-gray-600">
-              Efficient inventory management tools to keep your stock organized.
-            </p>
-          </div>
-          <div className="text-center p-6 rounded-lg bg-gray-50 hover:shadow-md transition-shadow duration-200">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Route Optimization
-            </h3>
-            <p className="mt-2 text-gray-600">
-              Smart route optimization tools to ensure timely deliveries.
-            </p>
-          </div>
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Features icon={<TrackingSystemIcon className="w-8 h-8 text-brand-yellow" />} title={translateTools("tracking_title")} description={translateTools("tracking_desc")} />
+          <Features icon={<InventoryManagementIcon className="w-8 h-8 text-brand-yellow" />} title={translateTools("inventory_management_title")} description={translateTools("inventory_management_desc")} />
+          <Features icon={<RouteOptimizationIcon className="w-8 h-8 text-brand-yellow" />} title={translateTools("route_optimization_title")} description={translateTools("route_optimization_desc")} />
+          <Features icon={<CostCalculatorIcon className="w-8 h-8 text-brand-yellow" />} title={translateTools("cost_calculator_title")} description={translateTools("cost_calculator_desc")} />
+          <Features icon={<SchedulePickupIcon className="w-8 h-8 text-brand-yellow" />} title={translateTools("schedule_pickup_title")} description={translateTools("schedule_pickup_desc")} />
         </div>
-      </main>
-    </div>
+      </div>
   );
 };
 

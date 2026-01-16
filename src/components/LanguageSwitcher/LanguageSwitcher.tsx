@@ -32,15 +32,15 @@ const LanguageSwitcher = () => {
 
     return (
         <span className="whitespace-nowrap gap-1 flex items-center flex-row justify-center">
-            <Globe className="inline-block w-3.5 h-3.5 align-middle text-gray-400 dark:text-gray-500" />
+            <Globe className="inline-block w-3.5 h-3.5 align-middle text-gray-300 dark:text-gray-500" />
             <select
                 id="language-select"
                 value={locale}
                 onChange={handleLanguageChange}
                 className="inline-block align-middle ml-1 py-0.5 text-xs appearance-none
-                           bg-transparent text-gray-500 dark:text-gray-400
-                           hover:text-red-600 dark:hover:text-red-500
-                           focus:outline-none focus:text-red-600
+                           bg-transparent text-gray-300 dark:text-gray-400
+                           hover:text-brand-yellow dark:hover:text-brand-yellow
+                           focus:outline-none focus:text-brand-yellow
                            cursor-pointer transition-colors"
                 aria-label={translateCommon("select_language")}
             >
@@ -48,7 +48,7 @@ const LanguageSwitcher = () => {
                     <option 
                         key={lang.code} 
                         value={lang.code}
-                        className="bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300"
+                        className="bg-white dark:bg-[#0a0a1a] text-brand-navy dark:text-gray-300"
                     >
                         {translateCommon(lang.label)}
                     </option>

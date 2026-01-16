@@ -32,15 +32,15 @@ const ThemeSwitcher = () => {
   return (
     <button
       onClick={toggleTheme}
-      className={`relative w-16 h-8 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 ${
-        isDark ? "bg-gray-700" : "bg-gray-200"
+      className={`relative w-16 h-8 rounded-full p-1 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:ring-offset-2 ${
+        isDark ? "bg-brand-navy-light" : "bg-gray-200"
       }`}
       aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
       role="switch"
       aria-checked={isDark}
     >
       {/* Icons on the track */}
-      <Sun className="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-yellow-500" />
+      <Sun className="absolute left-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-yellow" />
       <Moon className="absolute right-1.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
       
       {/* Toggle knob */}
@@ -50,9 +50,9 @@ const ThemeSwitcher = () => {
         }`}
       >
         {isDark ? (
-          <Moon className="w-4 h-4 text-gray-700" />
+          <Moon className="w-4 h-4 text-brand-navy" />
         ) : (
-          <Sun className="w-4 h-4 text-yellow-500" />
+          <Sun className="w-4 h-4 text-brand-yellow" />
         )}
       </div>
     </button>
