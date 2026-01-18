@@ -1,9 +1,13 @@
+import MapWrapper from "../Map/MapWrapper";
 import OpenIndicator from "../OpenIndicator/OpenIndicator";
 import ContactData from "./ContactData.json";
 import { getTranslations } from "next-intl/server";
 
 const Contact = async () => {
+  // 
   const translateContact = await getTranslations('Contact');
+  
+  
 
   return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,18 +65,22 @@ const Contact = async () => {
             </div>
 
             <div className="p-8 rounded-2xl bg-white dark:bg-[#111127] border border-gray-100 dark:border-brand-navy-light hover:shadow-xl hover:border-brand-yellow dark:hover:border-brand-yellow transition-all duration-300">
-              <div className="flex items-center gap-4">
-              <div className="w-14 h-14 flex items-center justify-center rounded-full bg-brand-yellow/15 dark:bg-brand-yellow/20 text-brand-yellow">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-14 h-14 flex items-center justify-center rounded-full bg-brand-yellow/15 dark:bg-brand-yellow/20 text-brand-yellow">
+                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-brand-navy dark:text-white">{translateContact("address_title")}</h3>
+                  <p className="text-sm text-brand-gray dark:text-gray-400">{ContactData.data.address_1}</p>
+                  <p className="text-sm text-brand-gray dark:text-gray-400">{ContactData.data.address_2}</p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold text-brand-navy dark:text-white">{translateContact("address_title")}</h3>
-
-</div>              
-              <p className="mt-3 text-brand-gray dark:text-gray-400">{ContactData.data.address_1}</p>
-              <p className="text-brand-gray dark:text-gray-400">{ContactData.data.address_2}</p>
+              <div className="mt-4 -mx-8 -mb-8">
+                <MapWrapper />
+              </div>
             </div>
           </div>
 
@@ -187,7 +195,7 @@ const Contact = async () => {
                     name="city"
                     id="city"
                     autoComplete="address-level2"
-                    placeholder="Los Angeles"
+                    placeholder="Fremont"
                     className="block w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-brand-navy-light bg-white dark:bg-[#0a0a1a] text-brand-navy dark:text-white placeholder-brand-gray focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent transition-all duration-200"
                   />
                 </div>
