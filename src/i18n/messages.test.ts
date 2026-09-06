@@ -19,9 +19,11 @@ describe('localized messages', () => {
   });
 
   it('defines metadata copy for localized tool pages', () => {
+    expect(enMessages.Metadata.news.title).toBeTruthy();
     expect(enMessages.Metadata.dictionary.title).toBeTruthy();
     expect(enMessages.Metadata.calculator.title).toBeTruthy();
     expect(enMessages.Metadata.incoterms.title).toBeTruthy();
+    expect(zhTwMessages.Metadata.news.title).toBeTruthy();
     expect(zhTwMessages.Metadata.dictionary.title).toBeTruthy();
     expect(zhTwMessages.Metadata.calculator.title).toBeTruthy();
     expect(zhTwMessages.Metadata.incoterms.title).toBeTruthy();
@@ -69,11 +71,17 @@ describe('localized messages', () => {
     }
   });
 
-  it('does not ship placeholder news or nonexistent tools', () => {
+  it('defines localized news navigation and page copy', () => {
     for (const messages of [enMessages, zhTwMessages]) {
-      expect(messages).not.toHaveProperty('News');
-      expect(messages.Metadata).not.toHaveProperty('news');
-      expect(messages.NavBar).not.toHaveProperty('news');
+      expect(messages.News.title).toBeTruthy();
+      expect(messages.News.empty).toBeTruthy();
+      expect(messages.Metadata.news.title).toBeTruthy();
+      expect(messages.NavBar.news).toBeTruthy();
+    }
+  });
+
+  it('does not ship nonexistent tools', () => {
+    for (const messages of [enMessages, zhTwMessages]) {
       expect(messages.Tools).not.toHaveProperty('schedule_pickup_desc');
       expect(messages.Tools).not.toHaveProperty('route_optimization_title');
       expect(messages.Tools).not.toHaveProperty('route_optimization_desc');

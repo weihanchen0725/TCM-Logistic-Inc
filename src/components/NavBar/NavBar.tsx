@@ -33,7 +33,15 @@ const NavBar = ({
   const isHomePage = pathname === `/${locale}` || pathname === '/';
   const getHref = (anchor: string | undefined) => {
     const resolved = anchor ?? '#';
-    return isHomePage ? resolved : `/${locale}${resolved}`;
+    if (resolved.startsWith('#')) {
+      return isHomePage ? resolved : `/${locale}${resolved}`;
+    }
+
+    if (resolved.startsWith('/')) {
+      return `/${locale}${resolved}`;
+    }
+
+    return resolved;
   };
 
   // Stable reference — prevents useEffect in useActiveSection from re-firing every render.

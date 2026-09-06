@@ -6,6 +6,8 @@ import Contact from '@/components/Contact/Contact';
 import GlobalService from '@/components/GlobalService/GlobalService';
 import Home from '@/components/Home/Home';
 import Industries from '@/components/Industries/Industries';
+import { getNewsArticles } from '@/lib/news';
+import News from '@/components/News/News';
 import Partners from '@/components/Partners/Partners';
 import Services from '@/components/Services/Services';
 import Tools from '@/components/Tools/Tools';
@@ -23,6 +25,7 @@ export const generateMetadata = async ({ params }: PageProps) => {
 const HomePage = async ({ params }: PageProps) => {
   const { locale } = await params;
   setRequestLocale(locale);
+  const articles = await getNewsArticles();
 
   return (
     <React.Fragment>
@@ -32,6 +35,7 @@ const HomePage = async ({ params }: PageProps) => {
       <Services showDetails />
       <GlobalService />
       <Industries />
+      <News articles={articles} headingLevel={2} />
       <Tools />
       <Contact />
     </React.Fragment>

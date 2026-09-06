@@ -12,6 +12,10 @@
       "title": "物流服務",
       "description": "探索 DIT San Francisco Inc. 的貨運協調、倉儲支援、供應鏈協調與客戶追蹤入口。"
     },
+    "news": {
+      "title": "最新消息",
+      "description": "閱讀 DIT San Francisco Inc. 的最新消息與物流資訊。"
+    },
     "tools": {
       "title": "物流工具",
       "description": "使用 GoFreight 客戶追蹤入口、物流字典、Incoterms 指南與貨運體積計算機。"
@@ -134,6 +138,11 @@
     "cost_calculator_title": "計算機",
     "cost_calculator_desc": "依包裝尺寸與件數計算貨運體積 CBM 與 CFT。"
   },
+  "News": {
+    "title": "最新消息",
+    "description": "DIT San Francisco 團隊的公司更新、貿易資訊與物流觀點。",
+    "empty": "目前無法取得最新消息，請稍後再查看。"
+  },
   "Calculator": {
     "input_dimension": "輸入尺寸",
     "pieces": "件數",
@@ -228,6 +237,7 @@
     "home": "首頁",
     "about": "關於我們",
     "services": "服務",
+    "news": "最新消息",
     "tools": "工具",
     "contact": "聯絡我們"
   },

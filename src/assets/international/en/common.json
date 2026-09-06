@@ -12,6 +12,10 @@
       "title": "Logistics Services",
       "description": "Explore freight coordination, warehousing support, supply chain coordination, and customer tracking access from DIT San Francisco Inc."
     },
+    "news": {
+      "title": "News",
+      "description": "Read the latest updates and logistics news from DIT San Francisco Inc."
+    },
     "tools": {
       "title": "Logistics Tools",
       "description": "Access a GoFreight customer tracking portal link, freight dictionary, Incoterms guidance, and shipment volume calculator."
@@ -146,6 +150,11 @@
     "cost_calculator_title": "Calculator",
     "cost_calculator_desc": "Calculate shipment volume in CBM and CFT from package dimensions and quantity."
   },
+  "News": {
+    "title": "News",
+    "description": "Company updates, trade notes, and logistics insights from the DIT San Francisco team.",
+    "empty": "News updates are not available right now. Please check back soon."
+  },
   "Calculator": {
     "input_dimension": "Input the dimension",
     "pieces": "Pieces",
@@ -177,6 +186,7 @@
     "home": "Home",
     "about": "About",
     "services": "Services",
+    "news": "News",
     "tools": "Tools",
     "contact": "Contact"
   },

@@ -13,6 +13,7 @@ export type MetadataPageKey =
   | 'home'
   | 'about'
   | 'services'
+  | 'news'
   | 'tools'
   | 'contact'
   | 'dictionary'
@@ -30,6 +31,7 @@ export const localizedRoutes: LocalizedRoute[] = [
   { path: '', pageKey: 'home' },
   { path: '/about', pageKey: 'about' },
   { path: '/services', pageKey: 'services' },
+  { path: '/news', pageKey: 'news' },
   { path: '/tools', pageKey: 'tools' },
   { path: '/contact', pageKey: 'contact' },
   { path: '/tools/dictionary', pageKey: 'dictionary' },

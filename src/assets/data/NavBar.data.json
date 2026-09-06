@@ -25,6 +25,14 @@
   },
   {
     "id": "4",
+    "Key": "news",
+    "Value": "#news",
+    "isActive": true,
+    "isEnabled": true,
+    "isExternal": false
+  },
+  {
+    "id": "5",
     "Key": "tools",
     "Value": "#tools",
     "isActive": true,
@@ -32,7 +40,7 @@
     "isExternal": false
   },
   {
-    "id": "5",
+    "id": "6",
     "Key": "contact",
     "Value": "#contact",
     "isActive": true,
