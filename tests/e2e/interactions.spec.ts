@@ -59,34 +59,11 @@ test('homepage header actions retain their button treatments', async ({ page }) 
 
   const header = page.getByRole('banner');
   const tracking = header.getByRole('link', { name: 'Track a Shipment', exact: true });
-  const quote = header.getByRole('link', { name: 'Request a Freight Quote', exact: true });
+  const quote = header.getByRole('link', { name: 'Contact Us', exact: true });
 
   await expect(tracking).toHaveCSS('background-color', 'rgb(0, 10, 60)');
   await expect(tracking).toHaveCSS('color', 'rgb(255, 204, 0)');
   await expect(quote).toHaveCSS('border-top-color', 'rgb(0, 10, 60)');
-});
-
-test('signed-out header presents login above sign-up in an authentication dropdown', async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1500, height: 900 });
-  await page.goto('/en');
-
-  const header = page.getByRole('banner');
-  await expect(header.getByRole('button', { name: 'Login / Signup', exact: true })).toHaveCount(0);
-
-  await openResponsiveMenu(page);
-  const authAction = header.getByRole('button', { name: 'Login / Signup', exact: true });
-
-  await expect(authAction).toBeVisible();
-  await expect(authAction).toHaveCSS('border-top-color', 'rgb(0, 10, 60)');
-  await expect(authAction).toHaveCSS('border-top-left-radius', '0px');
-
-  await authAction.click();
-
-  const authOptions = header.getByRole('group', { name: 'Authentication options' });
-  await expect(authAction).toHaveAttribute('aria-expanded', 'true');
-  await expect(authOptions.getByRole('button')).toHaveText(['Log in', 'Sign up']);
 });
 
 test('header remains within the viewport while resizing in both directions', async ({ page }) => {
@@ -104,16 +81,6 @@ test('header remains within the viewport while resizing in both directions', asy
     expect(headerBox!.x + headerBox!.width).toBeLessThanOrEqual(width);
     await expect(page.locator('html')).toHaveJSProperty('scrollWidth', width);
   }
-
-  await page.setViewportSize({ width: 390, height: 900 });
-  await openResponsiveMenu(page);
-  await page.getByRole('button', { name: 'Login / Signup', exact: true }).click();
-
-  const authOptions = page.getByRole('group', { name: 'Authentication options' });
-  const authOptionsBox = await authOptions.boundingBox();
-  expect(authOptionsBox).not.toBeNull();
-  expect(authOptionsBox!.x).toBeGreaterThanOrEqual(0);
-  expect(authOptionsBox!.x + authOptionsBox!.width).toBeLessThanOrEqual(390);
 });
 
 test('header load motion reveals navigation in reading order', async ({ page }) => {
@@ -197,16 +164,19 @@ for (const width of [390, 1280]) {
 }
 
 test('subpage header section links return to localized homepage sections', async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.setViewportSize({ width: 1501, height: 900 });
   await page.goto('/zh-TW/services');
 
   await expect(page.locator('header nav').getByRole('link', { name: '關於我們' })).toHaveAttribute(
     'href',
     '/zh-TW#about'
   );
-  await expect(
-    page.getByRole('banner').getByRole('link', { name: '申請貨運報價' })
-  ).toHaveAttribute('href', '/zh-TW#contact');
+  // The nav item and the CTA share the '聯絡我們' label; both must resolve to the homepage anchor.
+  const contactLinks = page.getByRole('banner').getByRole('link', { name: '聯絡我們' });
+  await expect(contactLinks).toHaveCount(2);
+  for (const link of await contactLinks.all()) {
+    await expect(link).toHaveAttribute('href', '/zh-TW#contact');
+  }
 });
 
 test('calculator converts units and computes CBM/CFT', async ({ page }) => {
@@ -343,24 +313,13 @@ test('desktop header shows the full inline navigation above 1500px', async ({ pa
   await expect(page.getByRole('button', { name: 'Open menu' })).toHaveCount(0);
 });
 
-test('desktop auth control sits to the right of the language selector', async ({ page }) => {
-  await page.setViewportSize({ width: 1501, height: 900 });
-  await page.goto('/en');
-
-  const languageBox = await page.locator('#language-select').boundingBox();
-  const authBox = await page
-    .getByRole('button', { name: 'Login / Signup', exact: true })
-    .boundingBox();
-
-  expect(languageBox).not.toBeNull();
-  expect(authBox).not.toBeNull();
-  expect(authBox!.x).toBeGreaterThan(languageBox!.x + languageBox!.width);
-});
-
 for (const width of [1501, 1600]) {
   test(`inline navigation links do not overlap at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/en');
+
+    // The header renders collapsed server-side and expands on hydration.
+    await expect(page.locator('header nav a')).toHaveCount(6);
 
     const boxes = await page.locator('header nav a').evaluateAll((links) =>
       links.map((link) => {
@@ -390,17 +349,17 @@ test('header moves CTA controls into the menu before equal navigation labels can
 
 // One unified sequence: every header item collapses right-to-left, 100px apart from 1500px.
 const unifiedCollapseCases = [
-  { width: 1600, remaining: 11 },
-  { width: 1501, remaining: 11 },
-  { width: 1500, remaining: 10 },
-  { width: 1400, remaining: 9 },
-  { width: 1300, remaining: 8 },
-  { width: 1200, remaining: 7 },
-  { width: 1100, remaining: 6 },
-  { width: 1000, remaining: 5 },
-  { width: 900, remaining: 4 },
-  { width: 800, remaining: 3 },
-  { width: 700, remaining: 2 },
+  { width: 1600, remaining: 10 },
+  { width: 1501, remaining: 10 },
+  { width: 1500, remaining: 9 },
+  { width: 1400, remaining: 8 },
+  { width: 1300, remaining: 7 },
+  { width: 1200, remaining: 6 },
+  { width: 1100, remaining: 5 },
+  { width: 1000, remaining: 4 },
+  { width: 900, remaining: 3 },
+  { width: 800, remaining: 2 },
+  { width: 700, remaining: 0 },
   { width: 600, remaining: 0 },
   { width: 500, remaining: 0 },
 ] as const;
@@ -413,10 +372,9 @@ const ALL_HEADER_ITEMS = [
   'Tools',
   'Contact',
   'Track a Shipment',
-  'Request a Freight Quote',
+  'Contact Us',
   'theme',
   'language',
-  'Login / Signup',
 ] as const;
 
 for (const { width, remaining } of unifiedCollapseCases) {
@@ -424,55 +382,55 @@ for (const { width, remaining } of unifiedCollapseCases) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/en');
 
-    // Auth renders once Clerk resolves; below 1501px the menu button replaces it.
-    if (remaining === ALL_HEADER_ITEMS.length) {
-      await page.getByRole('button', { name: 'Login / Signup', exact: true }).waitFor();
-    } else {
-      await page.getByRole('button', { name: 'Open menu' }).waitFor();
-    }
+    // Poll: the header renders collapsed server-side and expands on hydration.
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const header = document.querySelector('header');
+          const contact = header?.querySelector('[class*="headerContact"]');
+          const labels: string[] = [];
 
-    const inlineItems = await page.evaluate(() => {
-      const header = document.querySelector('header');
-      const contact = header?.querySelector('[class*="headerContact"]');
-      const labels: string[] = [];
+          header?.querySelectorAll('ul[data-style-mode="row"] > li > a').forEach((link) => {
+            labels.push(link.textContent?.trim() ?? '');
+          });
+          contact?.querySelectorAll('ul > li > a').forEach((link) => {
+            labels.push(link.textContent?.trim() ?? '');
+          });
+          if (contact?.querySelector('[class*="themeSwitcher"]')) labels.push('theme');
+          if (contact?.querySelector('#language-select')) labels.push('language');
 
-      header?.querySelectorAll('ul[data-style-mode="row"] > li > a').forEach((link) => {
-        labels.push(link.textContent?.trim() ?? '');
-      });
-      contact?.querySelectorAll('ul > li > a').forEach((link) => {
-        labels.push(link.textContent?.trim() ?? '');
-      });
-      if (contact?.querySelector('[class*="themeSwitcher"]')) labels.push('theme');
-      if (contact?.querySelector('#language-select')) labels.push('language');
-      if (contact?.querySelector('[class*="headerAuth"]')) labels.push('Login / Signup');
-
-      return labels;
-    });
-
-    expect(inlineItems).toEqual(ALL_HEADER_ITEMS.slice(0, remaining));
+          return labels;
+        })
+      )
+      .toEqual([...ALL_HEADER_ITEMS.slice(0, remaining)]);
   });
 }
 
 const progressiveNavigationCases = [
   {
-    width: 1000,
+    width: 1100,
     inline: ['Home', 'About', 'Services', 'News', 'Tools'],
     overflow: ['Contact'],
   },
   {
-    width: 900,
+    width: 1000,
     inline: ['Home', 'About', 'Services', 'News'],
     overflow: ['Tools', 'Contact'],
   },
   {
-    width: 800,
+    width: 900,
     inline: ['Home', 'About', 'Services'],
     overflow: ['News', 'Tools', 'Contact'],
   },
   {
-    width: 700,
+    width: 800,
     inline: ['Home', 'About'],
     overflow: ['Services', 'News', 'Tools', 'Contact'],
+  },
+  {
+    width: 700,
+    inline: [],
+    overflow: ['Home', 'About', 'Services', 'News', 'Tools', 'Contact'],
   },
   {
     width: 600,
@@ -503,7 +461,7 @@ for (const { width, inline, overflow } of progressiveNavigationCases) {
   });
 }
 
-for (const width of [1100, 1000, 900, 800, 700]) {
+for (const width of [1100, 1000, 900, 800]) {
   test(`inline navigation fills its row with equal-width items at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/en');
@@ -548,11 +506,12 @@ test('Traditional Chinese navigation uses the same progressive split', async ({ 
   await expect(page.locator('header ul[data-style-mode="row"] > li > a')).toHaveText([
     '首頁',
     '關於我們',
+    '服務',
+    '最新消息',
   ]);
 
   await page.getByRole('button', { name: '開啟選單' }).click();
   await expect(page.locator('header ul[data-style-mode="column"] > li > a')).toHaveText([
-    '服務',
     '工具',
     '聯絡我們',
   ]);

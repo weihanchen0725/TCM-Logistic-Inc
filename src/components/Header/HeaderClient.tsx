@@ -9,7 +9,6 @@ import type { StaticImageData } from 'next/image';
 import headerClass from './Header.module.scss';
 import NavBar, { ACTIVE_NAV_ITEM_COUNT } from '../NavBar/NavBar';
 import CTABar from '../CTABar/CTABar';
-import AuthControls from './AuthControls';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
@@ -23,19 +22,18 @@ type HeaderClientProps = {
 
 const HIDE_START_PX = 1500;
 const HIDE_STEP_PX = 100;
-// Controls that collapse before any CTA or navigation link: auth, language, theme.
-const STANDALONE_CONTROL_COUNT = 3;
+// Controls that collapse before any CTA or navigation link: language, theme.
+const STANDALONE_CONTROL_COUNT = 2;
 
 type HeaderLayout = {
   inlineNavCount: number;
   inlineCtaCount: number;
   showInlineTheme: boolean;
   showInlineLanguage: boolean;
-  showInlineAuth: boolean;
 };
 
 // Every header item collapses into the menu right-to-left, one per HIDE_STEP_PX below
-// HIDE_START_PX: auth, language, theme, CTA links, then navigation links.
+// HIDE_START_PX: language, theme, CTA links, then navigation links.
 const getHeaderLayout = (width: number, ctaCount: number): HeaderLayout => {
   const collapsibleCount = STANDALONE_CONTROL_COUNT + ctaCount + ACTIVE_NAV_ITEM_COUNT;
   const hiddenCount =
@@ -54,9 +52,8 @@ const getHeaderLayout = (width: number, ctaCount: number): HeaderLayout => {
     // A lone link beside the menu button reads as clutter, so the last step takes both.
     inlineNavCount: remainingNavCount === 1 ? 0 : remainingNavCount,
     inlineCtaCount: ctaCount - hiddenCtaCount,
-    showInlineTheme: hiddenCount < 3,
-    showInlineLanguage: hiddenCount < 2,
-    showInlineAuth: hiddenCount < 1,
+    showInlineTheme: hiddenCount < 2,
+    showInlineLanguage: hiddenCount < 1,
   };
 };
 
@@ -65,7 +62,6 @@ const DEFAULT_HEADER_LAYOUT: HeaderLayout = {
   inlineCtaCount: 0,
   showInlineTheme: false,
   showInlineLanguage: false,
-  showInlineAuth: false,
 };
 
 const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) => {
@@ -80,14 +76,11 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
     [headerData.CTA]
   );
   const activeCtaCount = activeCtaLinks.length;
-  const { inlineNavCount, inlineCtaCount, showInlineTheme, showInlineLanguage, showInlineAuth } =
-    headerLayout;
+  const { inlineNavCount, inlineCtaCount, showInlineTheme, showInlineLanguage } = headerLayout;
   const hasOverflowNavigation = inlineNavCount < ACTIVE_NAV_ITEM_COUNT;
   const hasOverflowCta = inlineCtaCount < activeCtaCount;
-  const hasOverflowControls =
-    !showInlineTheme || !showInlineLanguage || !showInlineAuth || hasOverflowCta;
-  const hasInlineContact =
-    inlineCtaCount > 0 || showInlineTheme || showInlineLanguage || showInlineAuth;
+  const hasOverflowControls = !showInlineTheme || !showInlineLanguage || hasOverflowCta;
+  const hasInlineContact = inlineCtaCount > 0 || showInlineTheme || showInlineLanguage;
   const hasMenu = hasOverflowNavigation || hasOverflowControls;
 
   // Reference to the sticky header for reading height and writing CSS vars.
@@ -191,8 +184,7 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
             previousLayout.inlineNavCount === nextLayout.inlineNavCount &&
             previousLayout.inlineCtaCount === nextLayout.inlineCtaCount &&
             previousLayout.showInlineTheme === nextLayout.showInlineTheme &&
-            previousLayout.showInlineLanguage === nextLayout.showInlineLanguage &&
-            previousLayout.showInlineAuth === nextLayout.showInlineAuth
+            previousLayout.showInlineLanguage === nextLayout.showInlineLanguage
           ) {
             return previousLayout;
           }
@@ -204,8 +196,7 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
           nextLayout.inlineNavCount === ACTIVE_NAV_ITEM_COUNT &&
           nextLayout.inlineCtaCount === activeCtaCount &&
           nextLayout.showInlineTheme &&
-          nextLayout.showInlineLanguage &&
-          nextLayout.showInlineAuth
+          nextLayout.showInlineLanguage
         ) {
           setIsMenuOpen(false);
         }
@@ -354,7 +345,6 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
           ) : null}
           {showInlineTheme ? <ThemeSwitcher /> : null}
           {showInlineLanguage ? <LanguageSwitcher /> : null}
-          {showInlineAuth ? <AuthControls /> : null}
         </div>
       ) : null}
 
@@ -405,7 +395,6 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
               ) : null}
               {!showInlineTheme ? <ThemeSwitcher styleMode="column" /> : null}
               {!showInlineLanguage ? <LanguageSwitcher styleMode="column" /> : null}
-              {!showInlineAuth ? <AuthControls /> : null}
             </div>
           ) : null}
         </div>

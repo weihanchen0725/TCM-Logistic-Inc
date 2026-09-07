@@ -3,7 +3,6 @@ import { Roboto } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import { hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { ClerkProvider } from '@clerk/nextjs';
 import { Analytics } from '@vercel/analytics/next';
 import { locales } from '@/i18n/config';
 import { SITE_URL } from '@/lib/seo';
@@ -235,24 +234,22 @@ export default async function RootLayout({
         className={`${roboto.variable} font-sans antialiased app_body`}
         suppressHydrationWarning
       >
-        <ClerkProvider>
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-brand-yellow focus:text-brand-navy focus:rounded focus:shadow-lg"
-          >
-            Skip to main content
-          </a>
-          <ServerProviders>
-            <ClientProviders>
-              <ScrollExperience />
-              <Header />
-              <main id="main-content" className="app_main page_container">
-                {children}
-              </main>
-              <Footer />
-            </ClientProviders>
-          </ServerProviders>
-        </ClerkProvider>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-brand-yellow focus:text-brand-navy focus:rounded focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
+        <ServerProviders>
+          <ClientProviders>
+            <ScrollExperience />
+            <Header />
+            <main id="main-content" className="app_main page_container">
+              {children}
+            </main>
+            <Footer />
+          </ClientProviders>
+        </ServerProviders>
         {process.env.VERCEL === '1' ? <Analytics /> : null}
       </body>
     </html>
