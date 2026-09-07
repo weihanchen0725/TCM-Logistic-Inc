@@ -10,9 +10,11 @@ import type { LinkProps } from '@/types/LinkProps';
 interface CTAProps {
   styleMode?: 'row' | 'column';
   ctaLinks?: LinkProps[];
+  startIndex?: number;
+  endIndex?: number;
 }
 
-const CTABar = ({ styleMode = 'row', ctaLinks: ctaLinksProp }: CTAProps) => {
+const CTABar = ({ styleMode = 'row', ctaLinks: ctaLinksProp, startIndex, endIndex }: CTAProps) => {
   const translateCTABar = useTranslations('CTABar');
   const pathname = usePathname();
   const locale = useLocale();
@@ -29,16 +31,16 @@ const CTABar = ({ styleMode = 'row', ctaLinks: ctaLinksProp }: CTAProps) => {
     return `/${locale}${resolved}`;
   };
 
-  const renderLinks = () =>
-    ctaLinks?.map((cta: LinkProps, index: number) => {
-      if (!cta?.isActive) {
-        return null;
-      }
+  const renderLinks = () => {
+    const activeLinks = ctaLinks?.filter((cta: LinkProps) => cta?.isActive) ?? [];
+    const offset = startIndex ?? 0;
 
-      const isPrimary = index === 0;
+    return activeLinks.slice(offset, endIndex ?? activeLinks.length).map((cta, index) => {
+      // Primary treatment follows the link's position in the full list, not the slice.
+      const isPrimary = offset + index === 0;
 
       return (
-        <li key={`cta-item-${cta?.id || index}`}>
+        <li key={`cta-item-${cta?.id || offset + index}`}>
           <a
             className={`${ctaClass.ctaBarButton} ${isPrimary ? ctaClass.ctaBarButtonPrimary : ctaClass.ctaBarButtonSecondary}`}
             href={getHref(cta)}
@@ -51,6 +53,7 @@ const CTABar = ({ styleMode = 'row', ctaLinks: ctaLinksProp }: CTAProps) => {
         </li>
       );
     });
+  };
 
   return (
     <React.Fragment>

@@ -10,7 +10,8 @@ export type NewsArticle = {
 
 type NewsRecord = Record<string, unknown>;
 
-const getString = (value: unknown) => (typeof value === 'string' && value.trim() ? value : undefined);
+const getString = (value: unknown) =>
+  typeof value === 'string' && value.trim() ? value : undefined;
 
 const getNestedRecord = (value: unknown): NewsRecord | undefined => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -35,7 +36,8 @@ const normalizeNewsItem = (item: unknown, index: number): NewsArticle | undefine
     return undefined;
   }
 
-  const id = getString(source.id) ?? getString(source.documentId) ?? getString(source.slug) ?? `${index}`;
+  const id =
+    getString(source.id) ?? getString(source.documentId) ?? getString(source.slug) ?? `${index}`;
 
   return {
     id,
@@ -46,7 +48,9 @@ const normalizeNewsItem = (item: unknown, index: number): NewsArticle | undefine
       getString(source.description) ??
       getString(source.coverCaption),
     publishedAt:
-      getString(source.publishedAt) ?? getString(source.published_at) ?? getString(source.createdAt),
+      getString(source.publishedAt) ??
+      getString(source.published_at) ??
+      getString(source.createdAt),
     sourceUrl: getString(source.url) ?? getString(source.link),
   };
 };

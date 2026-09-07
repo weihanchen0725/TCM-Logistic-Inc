@@ -80,11 +80,7 @@ const GlobalService = async () => {
         </h2>
         <p className={styles.description}>{t('description')}</p>
       </div>
-      <div
-        className={styles.mapWrap}
-        data-testid="global-service-map"
-        aria-hidden="true"
-      >
+      <div className={styles.mapWrap} data-testid="global-service-map" aria-hidden="true">
         <aside className={styles.legend}>
           {COVERAGE_CODES.map((code) => (
             <span

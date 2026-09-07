@@ -190,6 +190,51 @@ $menu-ease-duration: 180ms;
     flex-shrink: 0;
   }
 
+  &Auth {
+    @include flex-row-center-center;
+    position: relative;
+    gap: 0.5rem;
+    flex-shrink: 0;
+
+    &Trigger {
+      gap: 0.375rem;
+
+      svg {
+        transition: transform $menu-ease-duration ease;
+
+        &.open {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    &Dropdown {
+      @include flex-column-start-start;
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      z-index: 30;
+      width: max-content;
+      min-width: 100%;
+      max-width: calc(100vw - 2rem);
+      box-sizing: border-box;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      border: 1px solid $border-color;
+      background-color: $background-color;
+      box-shadow: 0 0.5rem 1.5rem rgb(6 15 31 / 18%);
+
+      :global(.dark) & {
+        border-color: var(--color-border);
+        background-color: var(--color-bg-secondary);
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
   // ── Menu button (hidden on full desktop) ──
   &MenuButton {
     @include flex-row-center-center;
@@ -282,6 +327,26 @@ $menu-ease-duration: 180ms;
 
     > * > * {
       width: 100%;
+    }
+
+    .headerAuth {
+      justify-content: stretch;
+      flex-direction: column;
+      align-items: stretch;
+
+      > * {
+        flex: 1;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .headerAuthDropdown {
+        position: static;
+        width: 100%;
+        max-width: 100%;
+      }
     }
   }
 

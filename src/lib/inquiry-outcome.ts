@@ -16,10 +16,7 @@ const API_OUTCOMES = new Set<InquiryOutcome>([
   'service_unavailable',
 ]);
 
-export const getInquiryOutcome = (
-  responseOk: boolean,
-  responseBody: unknown
-): InquiryOutcome => {
+export const getInquiryOutcome = (responseOk: boolean, responseBody: unknown): InquiryOutcome => {
   if (!responseBody || typeof responseBody !== 'object') return 'network_error';
 
   const body = responseBody as { outcome?: unknown; error?: unknown };

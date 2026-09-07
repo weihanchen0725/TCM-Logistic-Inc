@@ -47,7 +47,9 @@ const News = async ({ articles, headingLevel = 1 }: NewsProps) => {
                   article.title
                 )}
               </SectionHeading>
-              {article.excerpt && <p className={newsClass.newsCardDescription}>{article.excerpt}</p>}
+              {article.excerpt && (
+                <p className={newsClass.newsCardDescription}>{article.excerpt}</p>
+              )}
             </article>
           ))}
         </div>

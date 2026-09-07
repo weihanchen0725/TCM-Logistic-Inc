@@ -9,14 +9,12 @@ describe('getInquiryOutcome', () => {
     );
   });
 
-  it.each([
-    'rate_limited',
-    'payload_too_large',
-    'delivery_failed',
-    'service_unavailable',
-  ] as const)('preserves the %s API outcome', (outcome) => {
-    expect(getInquiryOutcome(false, { error: outcome })).toBe(outcome);
-  });
+  it.each(['rate_limited', 'payload_too_large', 'delivery_failed', 'service_unavailable'] as const)(
+    'preserves the %s API outcome',
+    (outcome) => {
+      expect(getInquiryOutcome(false, { error: outcome })).toBe(outcome);
+    }
+  );
 
   it('normalizes server validation failures for the client', () => {
     expect(getInquiryOutcome(false, { error: 'invalid_inquiry' })).toBe('invalid_request');

@@ -1,7 +1,7 @@
 'use client';
 
 import { Menu, X } from 'lucide-react';
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
@@ -9,6 +9,7 @@ import type { StaticImageData } from 'next/image';
 import headerClass from './Header.module.scss';
 import NavBar, { ACTIVE_NAV_ITEM_COUNT } from '../NavBar/NavBar';
 import CTABar from '../CTABar/CTABar';
+import AuthControls from './AuthControls';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
@@ -20,33 +21,51 @@ type HeaderClientProps = {
   darkLogoUrl: string | StaticImageData;
 };
 
-const MENU_COLLAPSE_BREAKPOINT_PX = 1260;
-const NAVIGATION_STEP_PX = 80;
-const FIRST_NAVIGATION_STEP_PX = 1120;
+const HIDE_START_PX = 1500;
+const HIDE_STEP_PX = 100;
+// Controls that collapse before any CTA or navigation link: auth, language, theme.
+const STANDALONE_CONTROL_COUNT = 3;
 
 type HeaderLayout = {
   inlineNavCount: number;
-  showInlineContact: boolean;
+  inlineCtaCount: number;
+  showInlineTheme: boolean;
+  showInlineLanguage: boolean;
+  showInlineAuth: boolean;
 };
 
-const getHeaderLayout = (width: number): HeaderLayout => {
-  const hiddenNavCount =
-    width > FIRST_NAVIGATION_STEP_PX
+// Every header item collapses into the menu right-to-left, one per HIDE_STEP_PX below
+// HIDE_START_PX: auth, language, theme, CTA links, then navigation links.
+const getHeaderLayout = (width: number, ctaCount: number): HeaderLayout => {
+  const collapsibleCount = STANDALONE_CONTROL_COUNT + ctaCount + ACTIVE_NAV_ITEM_COUNT;
+  const hiddenCount =
+    width > HIDE_START_PX
       ? 0
-      : Math.min(
-          ACTIVE_NAV_ITEM_COUNT,
-          Math.floor((FIRST_NAVIGATION_STEP_PX - width) / NAVIGATION_STEP_PX) + 1
-        );
+      : Math.min(collapsibleCount, Math.floor((HIDE_START_PX - width) / HIDE_STEP_PX) + 1);
+
+  const hiddenCtaCount = Math.min(ctaCount, Math.max(0, hiddenCount - STANDALONE_CONTROL_COUNT));
+  const hiddenNavCount = Math.min(
+    ACTIVE_NAV_ITEM_COUNT,
+    Math.max(0, hiddenCount - STANDALONE_CONTROL_COUNT - ctaCount)
+  );
+  const remainingNavCount = ACTIVE_NAV_ITEM_COUNT - hiddenNavCount;
 
   return {
-    inlineNavCount: ACTIVE_NAV_ITEM_COUNT - hiddenNavCount,
-    showInlineContact: width > MENU_COLLAPSE_BREAKPOINT_PX,
+    // A lone link beside the menu button reads as clutter, so the last step takes both.
+    inlineNavCount: remainingNavCount === 1 ? 0 : remainingNavCount,
+    inlineCtaCount: ctaCount - hiddenCtaCount,
+    showInlineTheme: hiddenCount < 3,
+    showInlineLanguage: hiddenCount < 2,
+    showInlineAuth: hiddenCount < 1,
   };
 };
 
 const DEFAULT_HEADER_LAYOUT: HeaderLayout = {
   inlineNavCount: 0,
-  showInlineContact: false,
+  inlineCtaCount: 0,
+  showInlineTheme: false,
+  showInlineLanguage: false,
+  showInlineAuth: false,
 };
 
 const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) => {
@@ -56,9 +75,20 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
   const translateHeader = useTranslations('Header');
   const translateNavBar = useTranslations('NavBar');
   const pathname = usePathname();
-  const { inlineNavCount, showInlineContact } = headerLayout;
+  const activeCtaLinks = useMemo(
+    () => (headerData.CTA ?? []).filter((cta) => cta?.isActive),
+    [headerData.CTA]
+  );
+  const activeCtaCount = activeCtaLinks.length;
+  const { inlineNavCount, inlineCtaCount, showInlineTheme, showInlineLanguage, showInlineAuth } =
+    headerLayout;
   const hasOverflowNavigation = inlineNavCount < ACTIVE_NAV_ITEM_COUNT;
-  const hasMenu = !showInlineContact || hasOverflowNavigation;
+  const hasOverflowCta = inlineCtaCount < activeCtaCount;
+  const hasOverflowControls =
+    !showInlineTheme || !showInlineLanguage || !showInlineAuth || hasOverflowCta;
+  const hasInlineContact =
+    inlineCtaCount > 0 || showInlineTheme || showInlineLanguage || showInlineAuth;
+  const hasMenu = hasOverflowNavigation || hasOverflowControls;
 
   // Reference to the sticky header for reading height and writing CSS vars.
   const headerRef = useRef<HTMLElement | null>(null);
@@ -70,6 +100,7 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
   // Effect to handle scroll state for the header's "scrolled" visual style.
   useLayoutEffect(() => {
     let animationFrameId: number | null = null;
+    let layoutFrameId: number | null = null;
 
     const syncPaddingBaseline = () => {
       const headerElement = headerRef.current;
@@ -145,23 +176,40 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
       syncPaddingBaseline();
       queueUpdate();
 
-      const headerWidth = headerRef.current?.offsetWidth ?? window.innerWidth;
-      const nextLayout = getHeaderLayout(headerWidth);
-
-      setHeaderLayout((previousLayout) => {
-        if (
-          previousLayout.inlineNavCount === nextLayout.inlineNavCount &&
-          previousLayout.showInlineContact === nextLayout.showInlineContact
-        ) {
-          return previousLayout;
-        }
-
-        return nextLayout;
-      });
-
-      if (nextLayout.showInlineContact && nextLayout.inlineNavCount === ACTIVE_NAV_ITEM_COUNT) {
-        setIsMenuOpen(false);
+      if (layoutFrameId !== null) {
+        window.cancelAnimationFrame(layoutFrameId);
       }
+
+      // Measure in an animation frame: resize events can fire before the browser
+      // reports the updated viewport width, which leaves the layout a step behind.
+      layoutFrameId = window.requestAnimationFrame(() => {
+        layoutFrameId = null;
+        const nextLayout = getHeaderLayout(window.innerWidth, activeCtaCount);
+
+        setHeaderLayout((previousLayout) => {
+          if (
+            previousLayout.inlineNavCount === nextLayout.inlineNavCount &&
+            previousLayout.inlineCtaCount === nextLayout.inlineCtaCount &&
+            previousLayout.showInlineTheme === nextLayout.showInlineTheme &&
+            previousLayout.showInlineLanguage === nextLayout.showInlineLanguage &&
+            previousLayout.showInlineAuth === nextLayout.showInlineAuth
+          ) {
+            return previousLayout;
+          }
+
+          return nextLayout;
+        });
+
+        if (
+          nextLayout.inlineNavCount === ACTIVE_NAV_ITEM_COUNT &&
+          nextLayout.inlineCtaCount === activeCtaCount &&
+          nextLayout.showInlineTheme &&
+          nextLayout.showInlineLanguage &&
+          nextLayout.showInlineAuth
+        ) {
+          setIsMenuOpen(false);
+        }
+      });
     };
 
     // Sync initial state on load, then update during scrolling.
@@ -192,8 +240,12 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
       if (animationFrameId !== null) {
         window.cancelAnimationFrame(animationFrameId);
       }
+
+      if (layoutFrameId !== null) {
+        window.cancelAnimationFrame(layoutFrameId);
+      }
     };
-  }, []);
+  }, [activeCtaCount]);
 
   // Re-sync header background when route changes and browser restores scroll
   // without dispatching a scroll event (e.g., navigating back to landing page).
@@ -295,11 +347,14 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
         </div>
       ) : null}
 
-      {showInlineContact ? (
+      {hasInlineContact ? (
         <div className={headerClass.headerContact}>
-          <CTABar ctaLinks={headerData?.CTA} />
-          <ThemeSwitcher />
-          <LanguageSwitcher />
+          {inlineCtaCount > 0 ? (
+            <CTABar ctaLinks={activeCtaLinks} endIndex={inlineCtaCount} />
+          ) : null}
+          {showInlineTheme ? <ThemeSwitcher /> : null}
+          {showInlineLanguage ? <LanguageSwitcher /> : null}
+          {showInlineAuth ? <AuthControls /> : null}
         </div>
       ) : null}
 
@@ -343,11 +398,14 @@ const HeaderClient = ({ headerData, logoUrl, darkLogoUrl }: HeaderClientProps) =
               />
             </div>
           ) : null}
-          {!showInlineContact ? (
+          {hasOverflowControls ? (
             <div className={headerClass.headerMenuPanelContact}>
-              <CTABar ctaLinks={headerData?.CTA} styleMode="column" />
-              <ThemeSwitcher styleMode="column" />
-              <LanguageSwitcher styleMode="column" />
+              {hasOverflowCta ? (
+                <CTABar ctaLinks={activeCtaLinks} startIndex={inlineCtaCount} styleMode="column" />
+              ) : null}
+              {!showInlineTheme ? <ThemeSwitcher styleMode="column" /> : null}
+              {!showInlineLanguage ? <LanguageSwitcher styleMode="column" /> : null}
+              {!showInlineAuth ? <AuthControls /> : null}
             </div>
           ) : null}
         </div>

@@ -227,7 +227,11 @@
     "location": "舊金山",
     "alternativeText": "DIT舊金山標誌",
     "open_menu": "開啟選單",
-    "close_menu": "關閉選單"
+    "close_menu": "關閉選單",
+    "sign_in_or_sign_up": "登入 / 註冊",
+    "auth_options": "帳戶選項",
+    "sign_in": "登入",
+    "sign_up": "註冊"
   },
   "NavBar": {
     "title": "DIT San Francisco Inc.",

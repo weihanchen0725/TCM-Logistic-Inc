@@ -176,7 +176,11 @@
     "location": "San Francisco",
     "alternativeText": "DIT San Francisco Inc. Logo",
     "open_menu": "Open menu",
-    "close_menu": "Close menu"
+    "close_menu": "Close menu",
+    "sign_in_or_sign_up": "Login / Signup",
+    "auth_options": "Authentication options",
+    "sign_in": "Log in",
+    "sign_up": "Sign up"
   },
   "NavBar": {
     "title": "DIT San Francisco Inc.",
